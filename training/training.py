@@ -101,7 +101,6 @@ def train(prefix, **arg_dict):
             net.save_params(checkpoint_path)
             print ("save checkpoint to %s" % checkpoint_path)
         step += 1
-        net.export("simple_net", _batch_reader.get_epoch)
 
 def main():
     parser = argparse.ArgumentParser()
