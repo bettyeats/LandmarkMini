@@ -31,6 +31,10 @@ def train(prefix, **arg_dict):
     # net
     ctx = [mx.gpu(i) for i in range(gpu_num)]
     net =  models.init(num_label=num_labels, **arg_dict)
+    
+    # convert model to Hybrid so it could be exported to JSON
+    net.hybridize()
+
     if arg_dict["restore_ckpt"]:
         print "resotre checkpoint from %s" % (arg_dict["restore_ckpt"])
         net.load_params(arg_dict['restore_ckpt'], ctx=ctx)
@@ -100,6 +104,10 @@ def train(prefix, **arg_dict):
             checkpoint_path = os.path.join(prefix, 'model.params')
             net.save_params(checkpoint_path)
             print ("save checkpoint to %s" % checkpoint_path)
+
+            # save model parameters AND arch
+            checkpoint_prefix = os.path.join(prefix, 'hybrid')
+            net.models[0].export(checkpoint_prefix, epoch=step/1024) # you should use // as floor div in python 3
         step += 1
 
 def main():
